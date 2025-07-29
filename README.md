@@ -133,7 +133,6 @@ All scripts for this pipeline are available in the `long_read_validation/` folde
 
 ### 1. Prepare the reference genome
 
-```bash
 minimap2 -d genome.mmi genome.fna
 samtools faidx genome.fna
 gffread genome.gff -T -o genome.gtf
@@ -158,7 +157,7 @@ chmod +x compute_asr_individual.sh
 g++ ComputeASRfromLongReadGTFs.cpp -o ComputeASR
 ./ComputeASR sample.gtf
 
-Dependencies
+### Dependencies
 
     Python 3.10+
 
@@ -180,6 +179,6 @@ Dependencies
 
     StringTie2 v2.2.1
 
-    g++ (for compiling C++ ASR parse
+    g++ (for compiling C++ ASR)
 
 
