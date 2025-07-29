@@ -119,7 +119,67 @@ The script 'AnnotationASRvalues.ipynb' links the predicted and normalized values
 - **Common Tree (NCBI) + iTOL visualization**: https://itol.embl.de
 
 
+# Empirical Validation Using Long-Read Data
 
+To validate the annotation-derived ASR*, we analyzed long-read RNA-seq datasets from *Mus musculus*, obtained from the NCBI Sequence Read Archive (SRA), using the following filter query:
 
+- "Mus musculus"[Organism] AND ("RNA-Seq"[Strategy] OR "Iso-Seq"[Strategy] OR "FL-cDNA"[Strategy]) AND "PacBio SMRT"[Platform]
+
+We restricted the selection to single-run experiments. Reads were aligned to the *Mus musculus* RefSeq genome using `minimap2`, and transcript annotations were reconstructed with `StringTie2`. ASR values were computed for each sample and compared against EGAP-derived annotation-based ASR and ASR*.
+
+All scripts for this pipeline are available in the `long_read_validation/` folder.
+
+## Running the Long-Read Validation Pipeline
+
+### 1. Prepare the reference genome
+
+```bash
+minimap2 -d genome.mmi genome.fna
+samtools faidx genome.fna
+gffread genome.gff -T -o genome.gtf
+
+### 2. Run alignment
+
+chmod +x rnaseq_pipeline.sh
+./rnaseq_pipeline.sh samples_list.txt
+
+### 3. Generate GTF annotations
+
+chmod +x map_fastq_to_gtf.sh
+./map_fastq_to_gtf.sh samples_list.txt
+
+### 4. Compute ASR values
+
+chmod +x compute_asr_individual.sh
+./compute_asr_individual.sh gtf_size_list.txt
+
+### 5. Compile and run ASR calculator
+
+g++ ComputeASRfromLongReadGTFs.cpp -o ComputeASR
+./ComputeASR sample.gtf
+
+Dependencies
+
+    Python 3.10+
+
+        pandas
+
+        gffutils
+
+        xml.etree.ElementTree
+
+    R 4.3.1+
+
+        readr
+
+        ggplot2
+
+    minimap2 v2.24
+
+    samtools v1.17
+
+    StringTie2 v2.2.1
+
+    g++ (for compiling C++ ASR parse
 
 
